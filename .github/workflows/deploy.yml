@@ -1,41 +1,19 @@
-name: 部署網站到GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    branches:
+      - main
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: 檢出代碼
-        uses: actions/checkout@v4
-      
-      - name: 設置Pages
-        uses: actions/configure-pages@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
-          enablement: true
-      
-      - name: 上傳構建產物
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-      
-      - name: 部署到GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4 
+          branch: gh-pages
+          folder: . 
