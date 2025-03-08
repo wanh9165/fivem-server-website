@@ -19,9 +19,37 @@ hamburger.addEventListener('click', function() {
 
 // 關閉導航欄選單點擊鏈接時
 document.querySelectorAll('.nav-links a').forEach(function(link) {
-    link.addEventListener('click', function() {
+    link.addEventListener('click', function(e) {
+        e.preventDefault(); // 阻止默認行為
+        
+        // 關閉移動端選單
         hamburger.classList.remove('active');
         navLinks.classList.remove('active');
+        
+        // 獲取目標 section 的 id
+        const targetId = this.getAttribute('href');
+        
+        // 獲取目標元素
+        const targetSection = document.querySelector(targetId);
+        
+        // 平滑滾動到目標位置
+        if (targetSection) {
+            // 獲取導航欄高度用於偏移量
+            const navbarHeight = document.querySelector('.navbar').offsetHeight;
+            
+            // 計算目標位置，減去導航欄高度
+            const targetPosition = targetSection.offsetTop - navbarHeight;
+            
+            // 執行滾動
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+            
+            // 更新活動狀態
+            document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
+        }
     });
 });
 
@@ -133,4 +161,40 @@ window.addEventListener('load', () => {
     
     // 添加淡入效果
     document.body.classList.add('loaded');
-}); 
+    
+    // 設置初始活動導航項
+    setActiveNavItem();
+    
+    // 監聽滾動事件以更新活動導航項
+    window.addEventListener('scroll', setActiveNavItem);
+});
+
+// 設置活動導航項
+function setActiveNavItem() {
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    let currentSection = '';
+    
+    // 獲取導航欄高度
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    
+    // 找出當前視窗中的區域
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop - navbarHeight - 100; // 添加一些偏移量
+        const sectionHeight = section.offsetHeight;
+        const sectionId = '#' + section.getAttribute('id');
+        
+        if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+            currentSection = sectionId;
+        }
+    });
+    
+    // 更新導航項的活動狀態
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === currentSection) {
+            link.classList.add('active');
+        }
+    });
+} 
