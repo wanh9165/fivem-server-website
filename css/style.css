@@ -156,7 +156,7 @@ p {
 /* 英雄區域樣式 */
 .hero {
     height: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../images/gta6-bg.jpg') no-repeat center center/cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/gta6-bg.jpg') no-repeat center center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -362,8 +362,8 @@ p {
 
 /* 加入部分樣式 */
 .join-section {
-    padding: 6rem 0;
-    background: var(--gradient-bg), url('../images/join-bg.jpg') no-repeat center center/cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/join-bg.jpg') no-repeat center center/cover;
+    padding: 100px 0;
     color: var(--light-color);
 }
 
