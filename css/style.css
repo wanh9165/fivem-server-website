@@ -362,7 +362,7 @@ p {
 
 /* 加入部分樣式 */
 .join-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/join-bg.jpg') no-repeat center center/cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../images/gta6-bg.jpg') no-repeat center center/cover;
     padding: 100px 0;
     color: var(--light-color);
 }
