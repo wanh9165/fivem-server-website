@@ -114,20 +114,52 @@ async function updatePlayerCount() {
     }
 }
 
-// 初始加載時更新一次
+// 網站功能初始化
 document.addEventListener('DOMContentLoaded', function() {
+    // 更新在線玩家數
     updatePlayerCount();
     
     // 每60秒更新一次在線玩家數
     setInterval(updatePlayerCount, 60000);
+    
+    // 更新運營天數
+    updateOperationDays();
+    
+    // 每天更新一次運營天數
+    setInterval(updateOperationDays, 24 * 60 * 60 * 1000);
+    
+    // 添加伺服器直連按鈕
+    const serverJoinButton = document.createElement('a');
+    serverJoinButton.className = 'server-join-button';
+    serverJoinButton.href = 'https://cfx.re/join/zyldgd';
+    serverJoinButton.target = '_blank';
+    serverJoinButton.innerHTML = '<i class="fas fa-gamepad"></i> 直接加入伺服器';
+    
+    // 查找加入區域，添加直連按鈕
+    const joinButtons = document.querySelector('.join-buttons');
+    if (joinButtons) {
+        joinButtons.appendChild(serverJoinButton);
+    }
 });
 
 // 創建運營天數計算器
-const serverStartDate = new Date('2022-01-01'); // 伺服器開始日期
-const currentDate = new Date();
-const timeDiff = Math.abs(currentDate.getTime() - serverStartDate.getTime());
-const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-document.getElementById('days-count').textContent = daysDiff + '+';
+function updateOperationDays() {
+    const serverStartDate = new Date('2025-02-19'); // 伺服器開始日期設定為2025年2月19日
+    const currentDate = new Date();
+    
+    // 檢查當前日期是否已經超過開始日期
+    if (currentDate >= serverStartDate) {
+        // 正常計算運營天數
+        const timeDiff = Math.abs(currentDate.getTime() - serverStartDate.getTime());
+        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+        document.getElementById('days-count').textContent = daysDiff + '+';
+    } else {
+        // 如果尚未到開始日期，顯示距離開始的倒數天數
+        const timeDiff = Math.abs(serverStartDate.getTime() - currentDate.getTime());
+        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        document.getElementById('days-count').textContent = '即將開業 ' + daysDiff + ' 天';
+    }
+}
 
 // 圖片預加載
 const preloadImages = () => {
@@ -149,21 +181,6 @@ const preloadImages = () => {
         img.src = src;
     });
 };
-
-// 添加伺服器直連按鈕點擊事件
-document.addEventListener('DOMContentLoaded', function() {
-    const serverJoinButton = document.createElement('a');
-    serverJoinButton.className = 'server-join-button';
-    serverJoinButton.href = 'https://cfx.re/join/zyldgd';
-    serverJoinButton.target = '_blank';
-    serverJoinButton.innerHTML = '<i class="fas fa-gamepad"></i> 直接加入伺服器';
-    
-    // 查找加入區域，添加直連按鈕
-    const joinButtons = document.querySelector('.join-buttons');
-    if (joinButtons) {
-        joinButtons.appendChild(serverJoinButton);
-    }
-});
 
 // 頁面加載完成後執行
 window.addEventListener('load', () => {
