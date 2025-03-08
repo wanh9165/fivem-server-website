@@ -109,16 +109,16 @@ function updateOperationDays() {
 // 圖片預加載
 const preloadImages = () => {
     const imageSources = [
-        '/images/gta6-bg.jpg', // 新的 GTA VI 背景圖片
-        '/images/join-bg.jpg',
-        '/images/server-preview.jpg',
-        '/images/logo.png',
-        '/images/gallery1.jpg',
-        '/images/gallery2.jpg',
-        '/images/gallery3.jpg',
-        '/images/gallery4.jpg',
-        '/images/gallery5.jpg',
-        '/images/gallery6.jpg'
+        'images/gta6-bg.jpg', // 新的 GTA VI 背景圖片
+        'images/join-bg.jpg',
+        'images/server-preview.jpg',
+        'images/logo.png',
+        'images/gallery1.jpg',
+        'images/gallery2.jpg',
+        'images/gallery3.jpg',
+        'images/gallery4.jpg',
+        'images/gallery5.jpg',
+        'images/gallery6.jpg'
     ];
     
     imageSources.forEach(src => {
