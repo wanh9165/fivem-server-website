@@ -377,7 +377,7 @@ p {
     margin-top: 2rem;
 }
 
-.discord-button, .fivem-button, .server-button {
+.discord-button, .fivem-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -397,17 +397,37 @@ p {
     color: #333;
 }
 
-.server-button {
-    background-color: #e63946; /* 使用主題色 */
-    color: #fff;
-}
-
-.discord-button:hover, .fivem-button:hover, .server-button:hover {
+.discord-button:hover, .fivem-button:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.discord-button i, .fivem-button i, .server-button i {
+.discord-button i, .fivem-button i {
+    margin-right: 10px;
+}
+
+/* 伺服器直連按鈕樣式 */
+.server-join-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background-color: #e63946;
+    color: #fff;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.server-join-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    background-color: #d62c3b;
+}
+
+.server-join-button i {
     margin-right: 10px;
 }
 

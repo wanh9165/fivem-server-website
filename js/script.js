@@ -29,7 +29,7 @@ document.querySelectorAll('.nav-links a').forEach(function(link) {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
+        document.querySelector(this.getAttribute('href')).scrollView({
             behavior: 'smooth'
         });
     });
@@ -59,72 +59,68 @@ window.addEventListener('scroll', function() {
     });
 });
 
-// FiveM 伺服器資訊
-const SERVER_CODE = 'zyldgd'; // 從https://cfx.re/join/zyldgd獲取的伺服器代碼
-const CFX_API_URL = `https://servers-frontend.fivem.net/api/servers/single/`;
-
-// 從FiveM API獲取伺服器資訊
-async function getFiveMServerInfo() {
+// 從CFX.RE獲取實際在線玩家數
+async function fetchRealPlayerCount() {
     try {
-        const response = await fetch(`${CFX_API_URL}${SERVER_CODE}`);
+        // 使用CORS代理解決跨域問題
+        const corsProxy = 'https://corsproxy.io/?';
+        const serverCodeOrIP = 'zyldgd'; // 從CFX.RE伺服器代碼
+        const apiUrl = `${corsProxy}https://servers-frontend.fivem.net/api/servers/single/${serverCodeOrIP}`;
+        
+        const response = await fetch(apiUrl);
         if (!response.ok) {
-            throw new Error('無法獲取伺服器數據');
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
+        
         const data = await response.json();
-        return data.Data;
+        // 檢查是否成功獲取數據並且包含玩家數量信息
+        if (data && data.Data && data.Data.clients !== undefined) {
+            return data.Data.clients; // 返回在線玩家數
+        } else {
+            throw new Error('無法獲取玩家數據');
+        }
     } catch (error) {
-        console.error('獲取伺服器數據時出錯:', error);
+        console.error('獲取在線玩家數失敗:', error);
         return null;
     }
 }
 
-// 更新在線玩家數量
+// 在線玩家計數器更新
 async function updatePlayerCount() {
+    const playerCountElement = document.getElementById('player-count');
+    if (!playerCountElement) return;
+    
+    // 先顯示加載中
+    playerCountElement.textContent = "...";
+    
     try {
-        const serverInfo = await getFiveMServerInfo();
-        if (serverInfo) {
-            // 更新在線玩家數量
-            const onlinePlayers = serverInfo.clients || 0;
-            const maxPlayers = serverInfo.sv_maxclients || 128;
-            document.getElementById('player-count').textContent = onlinePlayers;
-            
-            // 更新註冊玩家數量（使用伺服器實際數據，如果有的話）
-            if (serverInfo.vars && serverInfo.vars.registeredPlayers) {
-                document.getElementById('registered-count').textContent = serverInfo.vars.registeredPlayers;
-            }
-            
-            // 如果伺服器名稱可用，也可以更新
-            if (serverInfo.hostname) {
-                const serverNameElements = document.querySelectorAll('.server-name');
-                serverNameElements.forEach(el => {
-                    el.textContent = serverInfo.hostname;
-                });
-            }
-            
-            console.log('伺服器資訊已更新', serverInfo);
+        // 嘗試獲取實際在線玩家數
+        const realPlayerCount = await fetchRealPlayerCount();
+        
+        if (realPlayerCount !== null) {
+            // 成功獲取實際數據
+            playerCountElement.textContent = realPlayerCount;
         } else {
-            // 如果API獲取失敗，則使用模擬數據
-            fallbackPlayerCount();
+            // 如果獲取失敗，使用隨機數字作為備選
+            const min = 30;
+            const max = 120;
+            const fallbackCount = Math.floor(Math.random() * (max - min + 1)) + min;
+            playerCountElement.textContent = fallbackCount;
         }
     } catch (error) {
-        console.error('更新玩家數量時出錯:', error);
-        fallbackPlayerCount();
+        console.error('更新玩家數錯誤:', error);
+        // 發生錯誤時的備用顯示
+        playerCountElement.textContent = "在線";
     }
 }
 
-// 後備方案：模擬在線玩家數量
-function fallbackPlayerCount() {
-    const min = 30;
-    const max = 120;
-    const playerCount = Math.floor(Math.random() * (max - min + 1)) + min;
-    document.getElementById('player-count').textContent = playerCount;
-}
-
 // 初始加載時更新一次
-updatePlayerCount();
-
-// 每60秒更新一次在線玩家數（避免過於頻繁請求API）
-setInterval(updatePlayerCount, 60000);
+document.addEventListener('DOMContentLoaded', function() {
+    updatePlayerCount();
+    
+    // 每60秒更新一次在線玩家數
+    setInterval(updatePlayerCount, 60000);
+});
 
 // 創建運營天數計算器
 const serverStartDate = new Date('2022-01-01'); // 伺服器開始日期
@@ -153,6 +149,21 @@ const preloadImages = () => {
         img.src = src;
     });
 };
+
+// 添加伺服器直連按鈕點擊事件
+document.addEventListener('DOMContentLoaded', function() {
+    const serverJoinButton = document.createElement('a');
+    serverJoinButton.className = 'server-join-button';
+    serverJoinButton.href = 'https://cfx.re/join/zyldgd';
+    serverJoinButton.target = '_blank';
+    serverJoinButton.innerHTML = '<i class="fas fa-gamepad"></i> 直接加入伺服器';
+    
+    // 查找加入區域，添加直連按鈕
+    const joinButtons = document.querySelector('.join-buttons');
+    if (joinButtons) {
+        joinButtons.appendChild(serverJoinButton);
+    }
+});
 
 // 頁面加載完成後執行
 window.addEventListener('load', () => {
