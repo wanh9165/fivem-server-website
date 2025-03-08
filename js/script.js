@@ -29,7 +29,7 @@ document.querySelectorAll('.nav-links a').forEach(function(link) {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollView({
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
             behavior: 'smooth'
         });
     });
@@ -59,10 +59,61 @@ window.addEventListener('scroll', function() {
     });
 });
 
-// 在線玩家計數器模擬
-function updatePlayerCount() {
-    // 這裡應該是從伺服器API獲取實際數據
-    // 模擬隨機的在線玩家數
+// FiveM 伺服器資訊
+const SERVER_CODE = 'zyldgd'; // 從https://cfx.re/join/zyldgd獲取的伺服器代碼
+const CFX_API_URL = `https://servers-frontend.fivem.net/api/servers/single/`;
+
+// 從FiveM API獲取伺服器資訊
+async function getFiveMServerInfo() {
+    try {
+        const response = await fetch(`${CFX_API_URL}${SERVER_CODE}`);
+        if (!response.ok) {
+            throw new Error('無法獲取伺服器數據');
+        }
+        const data = await response.json();
+        return data.Data;
+    } catch (error) {
+        console.error('獲取伺服器數據時出錯:', error);
+        return null;
+    }
+}
+
+// 更新在線玩家數量
+async function updatePlayerCount() {
+    try {
+        const serverInfo = await getFiveMServerInfo();
+        if (serverInfo) {
+            // 更新在線玩家數量
+            const onlinePlayers = serverInfo.clients || 0;
+            const maxPlayers = serverInfo.sv_maxclients || 128;
+            document.getElementById('player-count').textContent = onlinePlayers;
+            
+            // 更新註冊玩家數量（使用伺服器實際數據，如果有的話）
+            if (serverInfo.vars && serverInfo.vars.registeredPlayers) {
+                document.getElementById('registered-count').textContent = serverInfo.vars.registeredPlayers;
+            }
+            
+            // 如果伺服器名稱可用，也可以更新
+            if (serverInfo.hostname) {
+                const serverNameElements = document.querySelectorAll('.server-name');
+                serverNameElements.forEach(el => {
+                    el.textContent = serverInfo.hostname;
+                });
+            }
+            
+            console.log('伺服器資訊已更新', serverInfo);
+        } else {
+            // 如果API獲取失敗，則使用模擬數據
+            fallbackPlayerCount();
+        }
+    } catch (error) {
+        console.error('更新玩家數量時出錯:', error);
+        fallbackPlayerCount();
+    }
+}
+
+// 後備方案：模擬在線玩家數量
+function fallbackPlayerCount() {
     const min = 30;
     const max = 120;
     const playerCount = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -72,8 +123,8 @@ function updatePlayerCount() {
 // 初始加載時更新一次
 updatePlayerCount();
 
-// 每30秒更新一次在線玩家數
-setInterval(updatePlayerCount, 30000);
+// 每60秒更新一次在線玩家數（避免過於頻繁請求API）
+setInterval(updatePlayerCount, 60000);
 
 // 創建運營天數計算器
 const serverStartDate = new Date('2022-01-01'); // 伺服器開始日期

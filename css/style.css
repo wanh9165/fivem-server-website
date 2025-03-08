@@ -377,7 +377,7 @@ p {
     margin-top: 2rem;
 }
 
-.discord-button, .fivem-button {
+.discord-button, .fivem-button, .server-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -397,12 +397,17 @@ p {
     color: #333;
 }
 
-.discord-button:hover, .fivem-button:hover {
+.server-button {
+    background-color: #e63946; /* 使用主題色 */
+    color: #fff;
+}
+
+.discord-button:hover, .fivem-button:hover, .server-button:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.discord-button i, .fivem-button i {
+.discord-button i, .fivem-button i, .server-button i {
     margin-right: 10px;
 }
 
